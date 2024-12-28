@@ -21,14 +21,14 @@ module "azure_load_balancer_rules" {
   lb_name_prefix                = var.lb_name_prefix
 
   # Rule configurations
-  rules_protocols               = var.rules_protocols
-  rules_frontend_ports          = var.rules_frontend_ports
-  rules_backend_ports           = var.rules_backend_ports
-  rules_idle_timeout_in_minutes = var.rules_idle_timeout_in_minutes
-  rules_enable_floating_ip      = var.rules_enable_floating_ip
-  rules_enable_tcp_reset        = var.rules_enable_tcp_reset
-  rules_disable_outbound_snat   = var.rules_disable_outbound_snat
-  probe_names                   = var.probe_names
+  # rules_protocols               = var.rules_protocols
+  # rules_frontend_ports          = var.rules_frontend_ports
+  # rules_backend_ports           = var.rules_backend_ports
+  # rules_idle_timeout_in_minutes = var.rules_idle_timeout_in_minutes
+  # rules_enable_floating_ip      = var.rules_enable_floating_ip
+  # rules_enable_tcp_reset        = var.rules_enable_tcp_reset
+  # rules_disable_outbound_snat   = var.rules_disable_outbound_snat
+  # probe_names                   = var.probe_names
 
   # TCP rule configurations
   # lb_rule_tcp_protocol                   = var.lb_rule_tcp_protocol

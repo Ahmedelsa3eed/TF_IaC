@@ -41,7 +41,7 @@ variable "purpose" {
 variable "nic_names" {
   type        = string
   description = "List of network interface names to query."
-  default = "nic1,nic2"
+  default = "nic1"
 }
 
 variable "purpose_rg" {

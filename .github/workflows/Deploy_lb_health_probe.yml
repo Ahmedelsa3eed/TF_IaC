@@ -1,4 +1,4 @@
-name: 'Deploy Load Balancer - main'
+name: 'Deploy Load Balancer - health probe'
 run-name: 'Load Balancer - ${{inputs.environment}} purpose: ${{inputs.purpose}} : ${{inputs.requesttype}}'
 on:
   workflow_dispatch:
@@ -8,10 +8,9 @@ on:
         required: true
         description: Request Type
         options:
-            - Create Main Deploy (with New RG)
-            - Create Main Deploy (with Existing RG)
+            - Create Health Probe
             - Remove
-        default: "Create Main Deploy (with New RG)"
+        default: "Create Health Probe"
       environment:
         type: choice
         required: true
@@ -31,14 +30,6 @@ on:
           - uksouth
           - centralus
           - ukwest
-      sku_name:
-        type: choice
-        required: false
-        description: SKU for Load Balancer
-        options:
-          - Standard
-          - Basic
-        default: "Standard"
       purpose:
         type: string
         required: true
@@ -47,53 +38,51 @@ on:
         type: string
         required: true
         description: Resource Group Purpose.......... Hyphen designate an existing RG
-      address_space:
-        type: string
-        required: false
-        description: Virtual Network Adress Space
-      subnetname:
+      probes_protocols: 
         type: string
         required: true
-        description: Subnet name for Load Balancer.
-      subnet_address_prefixes:
+        description: comma separated list of protocols for the probes
+      probes_ports:
         type: string
-        required: false
-        description: Subnet Address Prefix 
-      private_ip_address:
+        required: true
+        description: comma separated list of ports for the probes
+      probes_intervals_in_seconds:
         type: string
-        required: false
-        description: Private IP address for Load Balancer frontend configuration.
+        required: true
+        description: comma separated list of intervals in seconds for the probes
+      probes_number_of_probes:
+        type: string
+        required: true
+        description: comma separated list of number of probes for the probes
 jobs:
-  load_balancer_main_deploy_existing_rg:
-    if: (github.event.inputs.requesttype == 'Create Main Deploy (with Existing RG)')
+  load_balancer_health_probe_create:
+    if: (github.event.inputs.requesttype == 'Create Health Probe')
     name: 'Load Balancer ${{inputs.purpose}}'
-    uses: ./.github/workflows/deploy_lb.yml
+    uses: ./.github/workflows/LBHealthProbe.yml
     secrets: inherit
     with:
       requesttype:                 '${{inputs.requesttype}}'
       environment:                 '${{inputs.environment}}'
       location:                    '${{inputs.location}}'
-      sku_name:                    '${{inputs.sku_name}}'
       purpose:                     '${{inputs.purpose}}'
       purposeRG:                   '${{inputs.purposeRG}}'
-      subnetname:                  '${{inputs.subnetname}}'
-      private_ip_address:          '${{inputs.private_ip_address}}'
-      address_space:               '${{inputs.address_space}}'
-      subnet_address_prefixes:     '${{inputs.subnet_address_prefixes}}'
+      probes_protocols:            '${{inputs.probes_protocols}}' 
+      probes_ports:                '${{inputs.probes_ports}}'
+      probes_intervals_in_seconds: '${{inputs.probes_intervals_in_seconds}}'
+      probes_number_of_probes:     '${{inputs.probes_number_of_probes}}'
 
-  load_balancer_main_deploy_remove:
+  load_balancer_health_probe_remove:
     if: (github.event.inputs.requesttype == 'Remove')
     name: 'Load Balancer ${{inputs.purpose}}'
-    uses: ./.github/workflows/deploy_lb.yml
+    uses: ./.github/workflows/LBHealthProbe.yml
     secrets: inherit
     with:
       requesttype:                 '${{inputs.requesttype}}'
       environment:                 '${{inputs.environment}}'
       location:                    '${{inputs.location}}'
-      sku_name:                    '${{inputs.sku_name}}'
       purpose:                     '${{inputs.purpose}}'
       purposeRG:                   '${{inputs.purposeRG}}'
-      subnetname:                  '${{inputs.subnetname}}'
-      private_ip_address:          '${{inputs.private_ip_address}}'
-      address_space:               '${{inputs.address_space}}'
-      subnet_address_prefixes:     '${{inputs.subnet_address_prefixes}}'
+      probes_protocols:            '${{inputs.probes_protocols}}' 
+      probes_ports:                '${{inputs.probes_ports}}'
+      probes_intervals_in_seconds: '${{inputs.probes_intervals_in_seconds}}'
+      probes_number_of_probes:     '${{inputs.probes_number_of_probes}}'

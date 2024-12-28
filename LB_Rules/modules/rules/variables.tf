@@ -121,34 +121,34 @@ variable "subscription_name" {
   default = "test-tech-dev-6425"
 }
 
-variable "rules_protocols" {
-  type = string
-}
+# variable "rules_protocols" {
+#   type = string
+# }
 
-variable "rules_frontend_ports" {
-  type = string
-}
+# variable "rules_frontend_ports" {
+#   type = string
+# }
 
-variable "rules_backend_ports" {
-  type = string
-}
+# variable "rules_backend_ports" {
+#   type = string
+# }
 
-variable "rules_idle_timeout_in_minutes" {
-  type = string
-}
+# variable "rules_idle_timeout_in_minutes" {
+#   type = string
+# }
 
-variable "rules_enable_floating_ip" {
-  type = string
-}
+# variable "rules_enable_floating_ip" {
+#   type = string
+# }
 
-variable "rules_enable_tcp_reset" {
-  type = string
-}
+# variable "rules_enable_tcp_reset" {
+#   type = string
+# }
 
-variable "rules_disable_outbound_snat" {
-  type = string
-}
+# variable "rules_disable_outbound_snat" {
+#   type = string
+# }
 
-variable "probe_names" {
-  type = string
-}
+# variable "probe_names" {
+#   type = string
+# }

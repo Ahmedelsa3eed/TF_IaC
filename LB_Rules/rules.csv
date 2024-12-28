@@ -1,0 +1,3 @@
+protocol,frontend_port,backend_port,idle_timeout,enable_floating_ip,enable_tcp_reset,disable_outbound_snat,probe_name
+Tcp,20000,20000,5,false,false,false,internal-sgs-server-Tcp-probe0
+Tcp,443,443,5,false,false,false,internal-sgs-server-Tcp-probe0

@@ -1,0 +1,70 @@
+name: 'Deploy Load Balancer - backend pool'
+run-name: 'Load Balancer - ${{inputs.environment}} purpose: ${{inputs.purpose}} : ${{inputs.requesttype}}'
+on:
+  workflow_dispatch:
+    inputs:
+      requesttype:
+        type: choice
+        required: true
+        description: Request Type
+        options:
+            - Create Backend Pool
+            - Remove
+        default: "Create Backend Pool"
+      environment:
+        type: choice
+        required: true
+        description: Environment
+        options:
+          - DEV
+          - UAT
+          - QA
+          - PROD
+      location:
+        type: choice
+        required: true
+        description: Deployment Location
+        options:
+          - Select the location
+          - eastus2
+          - uksouth
+          - centralus
+          - ukwest
+      purpose:
+        type: string
+        required: true
+        description: Purpose of the Load Balancer
+      purposeRG:
+        type: string
+        required: true
+        description: Resource Group Purpose.......... Hyphen designate an existing RG
+      nic_names:
+        description: "Comma-separated list of NIC names"
+        required: true
+        default: "nic1,nic2,nic3"
+jobs:
+  load_balancer_backend_pool_create:
+    if: (github.event.inputs.requesttype == 'Create Backend Pool')
+    name: 'Load Balancer ${{inputs.purpose}}'
+    uses: ./.github/workflows/LBBackendPool.yml
+    secrets: inherit
+    with:
+      requesttype:                 '${{inputs.requesttype}}'
+      environment:                 '${{inputs.environment}}'
+      location:                    '${{inputs.location}}'
+      purpose:                     '${{inputs.purpose}}'
+      purposeRG:                   '${{inputs.purposeRG}}'
+      nic_names:                   '${{inputs.nic_names}}'
+
+  load_balancer_backend_pool_remove:
+    if: (github.event.inputs.requesttype == 'Remove Backend Pool')
+    name: 'Load Balancer ${{inputs.purpose}}'
+    uses: ./.github/workflows/LBBackendPool.yml
+    secrets: inherit
+    with:
+      requesttype:                 '${{inputs.requesttype}}'
+      environment:                 '${{inputs.environment}}'
+      location:                    '${{inputs.location}}'
+      purpose:                     '${{inputs.purpose}}'
+      purposeRG:                   '${{inputs.purposeRG}}'
+      nic_names:                   '${{inputs.nic_names}}'

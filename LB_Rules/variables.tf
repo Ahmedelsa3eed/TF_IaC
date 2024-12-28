@@ -135,43 +135,43 @@ variable "lb_name_prefix" {
 #   default     = false
 # }
 
-variable "rules_protocols" {
-  type = string
-  default = "Tcp,Tcp"
-}
+# variable "rules_protocols" {
+#   type = string
+#   default = "Tcp,Tcp"
+# }
 
-variable "rules_frontend_ports" {
-  type = string
-  default = "20000,443"
-}
+# variable "rules_frontend_ports" {
+#   type = string
+#   default = "20000,443"
+# }
 
-variable "rules_backend_ports" {
-  type = string
-  default = "20000,443"
-}
+# variable "rules_backend_ports" {
+#   type = string
+#   default = "20000,443"
+# }
 
-variable "rules_idle_timeout_in_minutes" {
-  type = string
-  default = "5,5"  
-}
+# variable "rules_idle_timeout_in_minutes" {
+#   type = string
+#   default = "5,5"  
+# }
 
-variable "rules_enable_floating_ip" {
-  type = string
-  default = "false,false"
-}
+# variable "rules_enable_floating_ip" {
+#   type = string
+#   default = "false,false"
+# }
 
-variable "rules_enable_tcp_reset" {
-  type = string
-  default = "false,false"
-}
+# variable "rules_enable_tcp_reset" {
+#   type = string
+#   default = "false,false"
+# }
 
-variable "rules_disable_outbound_snat" {
-  type = string
-  default = "false,false"
-}
+# variable "rules_disable_outbound_snat" {
+#   type = string
+#   default = "false,false"
+# }
 
-variable "probe_names" {
-  description = "Name for Load Balancer probe"
-  type        = string
-  default     = "internal-sgs-server-Tcp-probe0,internal-sgs-server-Tcp-probe0"
-}
+# variable "probe_names" {
+#   description = "Name for Load Balancer probe"
+#   type        = string
+#   default     = "internal-sgs-server-Tcp-probe0,internal-sgs-server-Tcp-probe0"
+# }

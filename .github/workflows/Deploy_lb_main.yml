@@ -1,0 +1,133 @@
+name: 'Deploy Load Balancer - main'
+run-name: 'Load Balancer - ${{inputs.environment}} purpose: ${{inputs.purpose}} : ${{inputs.requesttype}}'
+on:
+  workflow_dispatch:
+    inputs:
+      requesttype:
+        type: choice
+        required: true
+        description: Request Type
+        options:
+            - Create Main Deploy (with New RG)
+            - Create Main Deploy (with Existing RG)
+            - Remove
+        default: "Create Main Deploy (with New RG)"
+      environment:
+        type: choice
+        required: true
+        description: Environment
+        options:
+          - DEV
+          - UAT
+          - QA
+          - PROD
+      location:
+        type: choice
+        required: true
+        description: Deployment Location
+        options:
+          - Select the location
+          - eastus2
+          - uksouth
+          - centralus
+          - ukwest
+      sku_name:
+        type: choice
+        required: false
+        description: SKU for Load Balancer
+        options:
+          - Standard
+          - Basic
+        default: "Standard"
+      purpose:
+        type: string
+        required: true
+        description: Purpose of the Load Balancer
+      purposeRG:
+        type: string
+        required: true
+        description: Resource Group Purpose.......... Hyphen designate an existing RG
+      address_space:
+        type: string
+        required: false
+        description: Virtual Network Adress Space
+      subnetname:
+        type: string
+        required: true
+        description: Subnet name for Load Balancer.
+      subnet_address_prefixes:
+        type: string
+        required: false
+        description: Subnet Address Prefix 
+      private_ip_address:
+        type: string
+        required: false
+        description: Private IP address for Load Balancer frontend configuration.
+jobs:
+  resource_group:
+    if: (github.event.inputs.requesttype == 'Create Main Deploy (with New RG)')
+    name: 'Resource Group ${{inputs.purposeRG}}'
+    uses: ./.github/workflows/CreateResourceGroup.yml
+    secrets:
+      ARM_CLIENT_ID:        ${{secrets.AZURE_CLIENT_ID}}
+      ARM_CLIENT_SECRET:    ${{secrets.AZURE_CLIENT_SECRET}}
+      ARM_TENANT_ID:        ${{secrets.AZURE_TENANT_ID}}
+      ARM_SUBSCRIPTION_ID:  ${{secrets.AZURE_SUBSCRIPTION_ID}}
+    with:
+      name:                 'resource-group'
+      subscription:         'SNow Input'
+      environment:          '${{inputs.environment}}' 
+      location:             '${{inputs.location}}' 
+      purpose:              '${{inputs.purposeRG}}'
+
+  load_balancer_main_deploy_new_rg:
+    if: (github.event.inputs.requesttype == 'Create Main Deploy (with New RG)')
+    name: 'Load Balancer ${{inputs.purpose}}'
+    uses: ./.github/workflows/LBMainDeploy.yml
+    needs: resource_group
+    secrets: inherit
+    with:
+      requesttype:                 '${{inputs.requesttype}}'
+      environment:                 '${{inputs.environment}}'
+      location:                    '${{inputs.location}}'
+      sku_name:                    '${{inputs.sku_name}}'
+      purpose:                     '${{inputs.purpose}}'
+      purposeRG:                   '${{inputs.purposeRG}}'
+      subnetname:                  '${{inputs.subnetname}}'
+      private_ip_address:          '${{inputs.private_ip_address}}'
+      address_space:               '${{inputs.address_space}}'
+      subnet_address_prefixes:     '${{inputs.subnet_address_prefixes}}'
+  
+  load_balancer_main_deploy_existing_rg:
+    if: (github.event.inputs.requesttype == 'Create Main Deploy (with Existing RG)')
+    name: 'Load Balancer ${{inputs.purpose}}'
+    uses: ./.github/workflows/LBMainDeploy.yml
+    secrets: inherit
+    with:
+      requesttype:                 '${{inputs.requesttype}}'
+      environment:                 '${{inputs.environment}}'
+      location:                    '${{inputs.location}}'
+      sku_name:                    '${{inputs.sku_name}}'
+      purpose:                     '${{inputs.purpose}}'
+      purposeRG:                   '${{inputs.purposeRG}}'
+      subnetname:                  '${{inputs.subnetname}}'
+      private_ip_address:          '${{inputs.private_ip_address}}'
+      address_space:               '${{inputs.address_space}}'
+      subnet_address_prefixes:     '${{inputs.subnet_address_prefixes}}'
+
+  load_balancer_main_deploy_remove:
+    if: (github.event.inputs.requesttype == 'Remove')
+    name: 'Load Balancer ${{inputs.purpose}}'
+    uses: ./.github/workflows/LBMainDeploy.yml
+    secrets: inherit
+    with:
+      requesttype:                 '${{inputs.requesttype}}'
+      environment:                 '${{inputs.environment}}'
+      location:                    '${{inputs.location}}'
+      sku_name:                    '${{inputs.sku_name}}'
+      purpose:                     '${{inputs.purpose}}'
+      purposeRG:                   '${{inputs.purposeRG}}'
+      subnetname:                  '${{inputs.subnetname}}'
+      private_ip_address:          '${{inputs.private_ip_address}}'
+      address_space:               '${{inputs.address_space}}'
+      subnet_address_prefixes:     '${{inputs.subnet_address_prefixes}}'

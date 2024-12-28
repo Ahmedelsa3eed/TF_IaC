@@ -25,11 +25,5 @@ module "azure_load_balancer_health_probes" {
   probes_ports                   = var.probes_ports
   probes_intervals_in_seconds    = var.probes_intervals_in_seconds
   probes_number_of_probes        = var.probes_number_of_probes
-
-  # Probe configurations
-  # lb_probe_protocol             = var.lb_probe_protocol
-  # lb_probe_port                 = var.lb_probe_port
-  # lb_probe_interval_in_seconds  = var.lb_probe_interval_in_seconds
-  # lb_probe_number_of_probes     = var.lb_probe_number_of_probes
 }
 
