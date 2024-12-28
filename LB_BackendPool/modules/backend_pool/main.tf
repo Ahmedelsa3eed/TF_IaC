@@ -5,6 +5,7 @@ provider "azurerm" {
 # data "azurerm_subscription" "current" {}  # Read the current subscription info
 
 locals {
+  nic_names = split(",", var.nic_names)
   # Define data for naming standards
   naming = {
     bu                = lower(split("-", var.subscription_name)[1])
@@ -30,31 +31,39 @@ data "azurerm_resource_group" "rg" {
   name = "lb"
 }
 
-# create new virtual networks and subnets if they do not exist
-resource "azurerm_virtual_network" "vnet" {
-  name                = join("-", [local.naming.bu, local.naming.environment, local.env_location.locations_abbreviation, "vnet", local.naming.nn])
-  address_space       = [var.network_address_space]
-  location            = var.location
-  resource_group_name = data.azurerm_resource_group.rg.name
-}
-
-resource "azurerm_subnet" "subnet" {
-  name                 = var.subnetname //lz<app>-<env>-<region>-<purpose>-snet-<nn>
-  resource_group_name  = data.azurerm_resource_group.rg.name
-  virtual_network_name = azurerm_virtual_network.vnet.name
-  address_prefixes     = [var.subnet_address_prefixes]
-}
-
-resource "azurerm_lb" "internal_lb" {
+data "azurerm_lb" "internal_lb" {
   name                = join("-", [var.lb_name_prefix, local.naming.environment, local.env_location.locations_abbreviation, local.purpose_rg, local.purpose, local.sequence])
-  location            = var.location
   resource_group_name = data.azurerm_resource_group.rg.name
-  sku                 = var.sku_name
+}
 
-  frontend_ip_configuration {
-    name                          = "internal-${local.purpose_rg}-server-feip"
-    subnet_id                     = azurerm_subnet.subnet.id
-    private_ip_address            = var.private_ip_address
-    private_ip_address_allocation = var.private_ip_address_allocation
+# Define Backend Address Pool
+resource "azurerm_lb_backend_address_pool" "internal_lb_bepool" {
+  loadbalancer_id = data.azurerm_lb.internal_lb.id
+  name            = "internal-${local.purpose_rg}-server-bepool"
+}
+
+data "azurerm_network_interface" "nic" {
+  for_each = toset(local.nic_names)
+
+  name                = each.value
+  resource_group_name = data.azurerm_resource_group.rg.name
+}
+
+# Associate NICs with backend pool
+resource "azurerm_network_interface_backend_address_pool_association" "lb_backend_association" {
+  for_each = {
+    for nic_name in local.nic_names : nic_name => data.azurerm_network_interface.nic[nic_name]
+    if length(data.azurerm_network_interface.nic[nic_name].ip_configuration) > 0
+  }
+
+  network_interface_id    = each.value.id
+  ip_configuration_name   = each.value.ip_configuration[0].name
+  backend_address_pool_id = azurerm_lb_backend_address_pool.internal_lb_bepool.id
+
+  lifecycle {
+    precondition {
+      condition     = length(each.value.ip_configuration) > 0
+      error_message = "Network interface ${each.key} must have at least one IP configuration."
+    }
   }
 }

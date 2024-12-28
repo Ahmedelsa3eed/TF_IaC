@@ -38,37 +38,10 @@ variable "purpose" {
   default = "weapp/02"
 }
 
-variable "subnetname" {
-  type = string
-  # lz<app>-<env>-<region>-<purpose>-snet-<nn>
-  # default = "6425-dev-eus2-lb-snet-02"
-  default = "subnet"
-#  sensitive = true
-}
-
-# vnet address_space
-variable "address_space" {
-  type = string
-  description = "The address space that is used the virtual network."
-  default = "10.0.0.0/16"
-}
-
-variable "subnet_address_prefixes" {
-  type = string
-  description = ""
-  default = "10.0.1.0/24"
-}
-
 variable "purpose_rg" {
   description = "Purpose for the resource group"
   type        = string
   default     = "sgs"
-}
-
-variable "sku_name" {
-  description = "SKU name for the Load Balancer."
-  type        = string
-  default     = "Standard"
 }
 
 variable "lb_name_prefix" {
@@ -77,14 +50,45 @@ variable "lb_name_prefix" {
   default     = "6425"
 }
 
-variable "private_ip_address" {
-  description = "The private IP address to assign to the load balancer frontend configuration."
-  type        = string
-  default     = "10.0.1.10"
+# variable "lb_probe_protocol" {
+#   description = "Protocol for Load Balancer probe"
+#   type        = string
+#   default     = "Tcp"
+# }
+
+# variable "lb_probe_port" {
+#   description = "Port for Load Balancer probe"
+#   type        = number
+#   default     = 20005
+# }
+# variable "lb_probe_interval_in_seconds" {
+#   description = "Interval in seconds for Load Balancer probe"
+#   type        = number
+#   default     = 5
+# }
+
+# variable "lb_probe_number_of_probes" {
+#   description = "Number of probes for Load Balancer probe"
+#   type        = number
+#   default     = 3
+# }
+
+variable "probes_protocols" {
+  type = string
+  default     = "Tcp"
 }
 
-variable "private_ip_address_allocation" {
-  description = "Allocation method for private IP address"
-  type        = string
-  default     = "Static"
+variable "probes_ports" {
+  type = string
+  default = "20005"
+}
+
+variable "probes_intervals_in_seconds" {
+  type = string
+  default = "5"
+}
+
+variable "probes_number_of_probes" {
+  type = string
+  default = "3"
 }

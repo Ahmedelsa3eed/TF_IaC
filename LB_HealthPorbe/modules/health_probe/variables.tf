@@ -27,20 +27,6 @@ variable "location" {
   description = "location"
 }
 
-variable "subnetname" {
-  type = string
-}
-
-# vnet address_space
-variable "network_address_space" {
-  type = string
-  description = "The address space that is used the virtual network."
-}
-
-variable "subnet_address_prefixes" {
-  type = string
-}
-
 variable "purpose" {
   type        = string
   description = "(Required) The purpose in the format 'role/sequence' (e.g., 'webapp/02')."
@@ -55,30 +41,47 @@ variable "purpose_rg" {
   type        = string
 }
 
-variable "sku_name" {
-  description = "SKU name for the Load Balancer."
-  type        = string
-
-  validation {
-    condition     = contains(["Basic", "Standard"], var.sku_name)
-    error_message = "sku_name must be either 'Basic' or 'Standard'."
-  }
-}
-
-variable "private_ip_address" {
-  description = "The private IP address to assign to the load balancer frontend configuration."
-  type        = string
-}
-
-variable "private_ip_address_allocation" {
-  description = "Allocation method for private IP address"
-  type        = string
-}
-
 variable "lb_name_prefix" {
   description = "Prefix for Load Balancer names"
   type        = string
 }
+
+variable "probes_protocols" {
+  type = string
+}
+
+variable "probes_ports" {
+  type = string
+}
+
+variable "probes_intervals_in_seconds" {
+  type = string
+}
+
+variable "probes_number_of_probes" {
+  type = string
+  
+}
+
+# variable "lb_probe_protocol" {
+#   description = "Protocol for Load Balancer probe"
+#   type        = string
+# }
+
+# variable "lb_probe_port" {
+#   description = "Port for Load Balancer probe"
+#   type        = number
+# }
+
+# variable "lb_probe_interval_in_seconds" {
+#   description = "Interval in seconds for Load Balancer probe"
+#   type        = number
+# }
+
+# variable "lb_probe_number_of_probes" {
+#   description = "Number of probes for Load Balancer probe"
+#   type        = number
+# }
 
 variable "subscription_name" {
   type = string

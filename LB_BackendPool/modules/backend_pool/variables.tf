@@ -27,20 +27,6 @@ variable "location" {
   description = "location"
 }
 
-variable "subnetname" {
-  type = string
-}
-
-# vnet address_space
-variable "network_address_space" {
-  type = string
-  description = "The address space that is used the virtual network."
-}
-
-variable "subnet_address_prefixes" {
-  type = string
-}
-
 variable "purpose" {
   type        = string
   description = "(Required) The purpose in the format 'role/sequence' (e.g., 'webapp/02')."
@@ -55,24 +41,10 @@ variable "purpose_rg" {
   type        = string
 }
 
-variable "sku_name" {
-  description = "SKU name for the Load Balancer."
-  type        = string
 
-  validation {
-    condition     = contains(["Basic", "Standard"], var.sku_name)
-    error_message = "sku_name must be either 'Basic' or 'Standard'."
-  }
-}
-
-variable "private_ip_address" {
-  description = "The private IP address to assign to the load balancer frontend configuration."
+variable "nic_names" {
   type        = string
-}
-
-variable "private_ip_address_allocation" {
-  description = "Allocation method for private IP address"
-  type        = string
+  description = "List of network interface names to query."
 }
 
 variable "lb_name_prefix" {
