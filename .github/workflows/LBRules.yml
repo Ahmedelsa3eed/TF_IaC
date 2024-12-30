@@ -1,5 +1,5 @@
-name: 'Health Porbe Load Balancer (Call)'
-run-name: '${{github.actor}} - Adding/Updating/Removing LB health probes'
+name: 'Rules Load Balancer (Call)'
+run-name: '${{github.actor}} - Adding/Updating/Removing LB rules'
 on:
   workflow_call:
     inputs:
@@ -18,18 +18,7 @@ on:
       purposeRG:
         type: string
         required: false
-      probes_protocols:
-        type: string
-        required: true
-      probes_ports:
-        type: string
-        required: true
-      probes_intervals_in_seconds:
-        type: string
-        required: true
-      probes_number_of_probes:
-        type: string
-        required: true
+
 
 permissions:
   contents: read
@@ -64,56 +53,54 @@ jobs:
       - id: envvars
         name: Set environment variables based on deployment environment
         run: |
-          echo "BACKEND_STORAGE_ACCOUNT=${{ secrets.BACKEND_STORAGE_ACCOUNT }}" >> "$GITHUB_ENV"
-          echo "BACKEND_RESOURCE_GROUP=${{ secrets.BACKEND_RESOURCE_GROUP }}" >> "$GITHUB_ENV"
+            echo "BACKEND_STORAGE_ACCOUNT=${{ secrets.BACKEND_STORAGE_ACCOUNT }}" >> "$GITHUB_ENV"
+            echo "BACKEND_RESOURCE_GROUP=${{ secrets.BACKEND_RESOURCE_GROUP }}" >> "$GITHUB_ENV"
 
       - name: 'Terraform Initialize - Load Balancer'
-        run: terraform init -backend-config="resource_group_name=$BACKEND_RESOURCE_GROUP" -backend-config="storage_account_name=$BACKEND_STORAGE_ACCOUNT" -backend-config="container_name=terraform-state" -backend-config="key=${{ inputs.environment }}-${{ inputs.purpose }}-lb-probes-terraform.tfstate" -input=false
+        run: terraform init -backend-config="resource_group_name=$BACKEND_RESOURCE_GROUP" -backend-config="storage_account_name=$BACKEND_STORAGE_ACCOUNT" -backend-config="container_name=terraform-state" -backend-config="key=${{ inputs.environment }}-${{ inputs.purpose }}-lb-rules-terraform.tfstate" -input=false
         env:
+          TF_VAR_requesttype:                  '${{inputs.requestType}}'
           TF_VAR_location:                     '${{inputs.location}}'
           TF_VAR_environment:                  '${{inputs.environment}}'
           TF_VAR_purpose:                      '${{inputs.purpose}}'
           TF_VAR_purpose_rg:                   '${{inputs.purposeRG}}'
-          TF_VAR_probes_protocols:             '${{inputs.probes_protocols}}'
-          TF_VAR_probes_ports:                 '${{inputs.probes_ports}}'
-          TF_VAR_probes_intervals_in_seconds:  '${{inputs.probes_intervals_in_seconds}}'
-          TF_VAR_probes_number_of_probes:      '${{inputs.probes_number_of_probes}}'
 
       - name: 'Terraform Plan - Load Balancer'
-        if: ${{ inputs.requestType == 'Create Health Probe' }}
+        if: ${{ inputs.requestType == 'Create LB rules' }}
         run: terraform plan
         env:
+          TF_VAR_requesttype:                  '${{inputs.requestType}}'
           TF_VAR_location:                     '${{inputs.location}}'
           TF_VAR_environment:                  '${{inputs.environment}}'
           TF_VAR_purpose:                      '${{inputs.purpose}}'
           TF_VAR_purpose_rg:                   '${{inputs.purposeRG}}'
-          TF_VAR_probes_protocols:             '${{inputs.probes_protocols}}'
-          TF_VAR_probes_ports:                 '${{inputs.probes_ports}}'
-          TF_VAR_probes_intervals_in_seconds:  '${{inputs.probes_intervals_in_seconds}}'
-          TF_VAR_probes_number_of_probes:      '${{inputs.probes_number_of_probes}}'
       
       - name: 'Terraform Apply - Load Balancer'
-        if: ${{ inputs.requestType == 'Create Health Probe' }}
+        if: ${{ inputs.requestType == 'Create LB rules' }}
         run: terraform apply -auto-approve
         env:
+          TF_VAR_requesttype:                  '${{inputs.requestType}}'
           TF_VAR_location:                     '${{inputs.location}}'
           TF_VAR_environment:                  '${{inputs.environment}}'
           TF_VAR_purpose:                      '${{inputs.purpose}}'
           TF_VAR_purpose_rg:                   '${{inputs.purposeRG}}'
-          TF_VAR_probes_protocols:             '${{inputs.probes_protocols}}'
-          TF_VAR_probes_ports:                 '${{inputs.probes_ports}}'
-          TF_VAR_probes_intervals_in_seconds:  '${{inputs.probes_intervals_in_seconds}}'
-          TF_VAR_probes_number_of_probes:      '${{inputs.probes_number_of_probes}}'
       
       - name: 'Terraform Remove - Load Balancer'
         if: ${{ inputs.requestType == 'Remove' }}
         run: terraform destroy -auto-approve
         env:
+          TF_VAR_requesttype:                  '${{inputs.requestType}}'
           TF_VAR_location:                     '${{inputs.location}}'
           TF_VAR_environment:                  '${{inputs.environment}}'
           TF_VAR_purpose:                      '${{inputs.purpose}}'
           TF_VAR_purpose_rg:                   '${{inputs.purposeRG}}'
-          TF_VAR_probes_protocols:             '${{inputs.probes_protocols}}'
-          TF_VAR_probes_ports:                 '${{inputs.probes_ports}}'
-          TF_VAR_probes_intervals_in_seconds:  '${{inputs.probes_intervals_in_seconds}}'
-          TF_VAR_probes_number_of_probes:      '${{inputs.probes_number_of_probes}}'
+      
+      - name: 'Terraform Remove - Load Balancer'
+        if: ${{ inputs.requestType == 'Remove' }}
+        run: terraform destroy -auto-approve
+        env:
+          TF_VAR_requesttype:                  '${{inputs.requestType}}'
+          TF_VAR_location:                     '${{inputs.location}}'
+          TF_VAR_environment:                  '${{inputs.environment}}'
+          TF_VAR_purpose:                      '${{inputs.purpose}}'
+          TF_VAR_purpose_rg:                   '${{inputs.purposeRG}}'

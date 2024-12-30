@@ -71,7 +71,7 @@ jobs:
           echo "BACKEND_RESOURCE_GROUP=${{ secrets.BACKEND_RESOURCE_GROUP }}" >> "$GITHUB_ENV"
 
       - name: 'Terraform Initialize - Load Balancer'
-        run: terraform init -backend-config="resource_group_name=$BACKEND_RESOURCE_GROUP" -backend-config="storage_account_name=$BACKEND_STORAGE_ACCOUNT" -backend-config="container_name=terraform-state" -backend-config="key=${{ inputs.environment }}-${{ inputs.purpose }}-terraform.tfstate" -input=false
+        run: terraform init -backend-config="resource_group_name=$BACKEND_RESOURCE_GROUP" -backend-config="storage_account_name=$BACKEND_STORAGE_ACCOUNT" -backend-config="container_name=terraform-state" -backend-config="key=${{ inputs.environment }}-${{ inputs.purpose }}-lb-main-terraform.tfstate" -input=false
         env:
           TF_VAR_location:                     '${{inputs.location}}'
           TF_VAR_environment:                  '${{inputs.environment}}'
@@ -113,7 +113,7 @@ jobs:
       
       - name: 'Terraform Remove - Load Balancer'
         if: ${{ inputs.requestType == 'Remove' }}
-        run: terraform destroy -target=azurerm_lb.internal_lb -auto-approve
+        run: terraform destroy -auto-approve
         env:
           TF_VAR_location:                     '${{inputs.location}}'
           TF_VAR_environment:                  '${{inputs.environment}}'

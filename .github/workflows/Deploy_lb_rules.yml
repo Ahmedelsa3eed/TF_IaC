@@ -1,0 +1,64 @@
+name: 'Deploy Load Balancer - rules'
+run-name: 'Load Balancer - ${{inputs.environment}} purpose: ${{inputs.purpose}} : ${{inputs.requesttype}}'
+on:
+  workflow_dispatch:
+    inputs:
+      requesttype:
+        type: choice
+        required: true
+        description: Request Type
+        options:
+            - Create LB rules
+            - Remove
+        default: "Create LB rules"
+      environment:
+        type: choice
+        required: true
+        description: Environment
+        options:
+          - DEV
+          - UAT
+          - QA
+          - PROD
+      location:
+        type: choice
+        required: true
+        description: Deployment Location
+        options:
+          - Select the location
+          - eastus2
+          - uksouth
+          - centralus
+          - ukwest
+      purpose:
+        type: string
+        required: true
+        description: Purpose of the Load Balancer
+      purposeRG:
+        type: string
+        required: true
+        description: Resource Group Purpose.......... Hyphen designate an existing RG
+jobs:
+  load_balancer_lb_rules_create:
+    if: (github.event.inputs.requesttype == 'Create LB rules')
+    name: 'Load Balancer ${{inputs.purpose}}'
+    uses: ./.github/workflows/LBRules.yml
+    secrets: inherit
+    with:
+      requesttype:                 '${{inputs.requesttype}}'
+      environment:                 '${{inputs.environment}}'
+      location:                    '${{inputs.location}}'
+      purpose:                     '${{inputs.purpose}}'
+      purposeRG:                   '${{inputs.purposeRG}}'
+
+  load_balancer_lb_rules_remove:
+    if: (github.event.inputs.requesttype == 'Remove LB rules')
+    name: 'Load Balancer ${{inputs.purpose}}'
+    uses: ./.github/workflows/LBRules.yml
+    secrets: inherit
+    with:
+      requesttype:                 '${{inputs.requesttype}}'
+      environment:                 '${{inputs.environment}}'
+      location:                    '${{inputs.location}}'
+      purpose:                     '${{inputs.purpose}}'
+      purposeRG:                   '${{inputs.purposeRG}}'
